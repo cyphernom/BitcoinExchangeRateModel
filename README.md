@@ -1,4 +1,4 @@
-# BitcoinExchangeRateModel
+# Bitcoin Exchange Rate Model
 
 The bitcoin/USD daily closes are extremely autocorrelated. 
 
