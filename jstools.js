@@ -1,3 +1,5 @@
+/*NB REQUIRES JSTAT AND PLOTLY LIBS!*/
+
 function main(days, isf, divid, title) {
 
     const sd = (arr, usePopulation = false) => {
