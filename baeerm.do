@@ -1,4 +1,4 @@
-*(c)2020-2022 btconometrics*
+*(c)2020-2022 BTCodeOrange*
 import delimited https://coinmetrics.io/newdata/btc.csv, clear
 
 *fix date formats and tsset the data*
@@ -38,11 +38,11 @@ replace double logprice = ln(priceusd)
 gen double phasevariable = reward-(epoch+1)^2
 
 *on the basis it takes abotu 30 years for stuff to play out (i.e. 10957 days)
-gen double phaseplus = phasevariable +((date-d(31oct2008)) /10957)^4
+*gen double phaseplus = phasevariable +((date-d(31oct2008)) /10957)^4
 
 *thjs results in the model never reaching infinity, and slowing down growth substantially after some time
 drop if date<d(18jul2010)
-reg logprice l(1).logprice phaseplus if epoch<2
+reg logprice l(1).logprice phasevariable if epoch<2
 
   gen double decayfunc = 3*exp(-0.0004*[_n])*cos(0.005*[_n]-1)
   gen double secondorderdecayfunc = 0
