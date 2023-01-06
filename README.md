@@ -10,4 +10,3 @@ The model might be useful or interesting for some.
 I only ask that you credit me when/if you use it.
 
 Thanks
-Nick.
