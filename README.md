@@ -204,9 +204,10 @@ In conclusion, the Bitcoin Auto-correlation Exchange Rate Model provides a compr
 
 Running the model
 ==================
+```
 git clone https://github.com/btcodeorange/BitcoinExchangeRateModel.git
 cd BitcoinExchangeRateModel
 pip install -r requirements.txt
 python baerm.py
-
+```
 
