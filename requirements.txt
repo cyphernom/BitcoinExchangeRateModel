@@ -1,0 +1,7 @@
+matplotlib==3.7.1
+matplotlib-inline==0.1.6
+numpy==1.22.0
+pandas==2.0.2
+pandas-datareader==0.10.0
+scipy==1.10.1
+statsmodels==0.14.0
