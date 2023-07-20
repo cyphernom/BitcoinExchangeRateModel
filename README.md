@@ -1,6 +1,15 @@
 The Bitcoin Auto-correlation Exchange Rate Model: A Novel Two Step Approach
 ===========================================================================
 
+Running the model
+------------------
+```
+git clone https://github.com/btcodeorange/BitcoinExchangeRateModel.git
+cd BitcoinExchangeRateModel
+pip install -r requirements.txt
+python baerm.py
+```
+
 Understanding the significance and interactions of scarcity, momentum, sound money and subjective value
 --------------------------------------------------------------------------------------------------------
 by btconometrics
@@ -202,12 +211,5 @@ The BAERM offers a potential robust and well-founded methodology for understandi
 
 In conclusion, the Bitcoin Auto-correlation Exchange Rate Model provides a comprehensive fundamentally grounded and hopefully useful framework for understanding the Bitcoin USD exchange rate.
 
-Running the model
-==================
-```
-git clone https://github.com/btcodeorange/BitcoinExchangeRateModel.git
-cd BitcoinExchangeRateModel
-pip install -r requirements.txt
-python baerm.py
-```
+
 
