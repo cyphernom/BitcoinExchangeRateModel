@@ -19,7 +19,7 @@ In this article, we will utilise this fact to build a model for Bitcoin/USD exch
 
 This is a model of sound money, scarcity and subjective value.
 
-Figure 1: The BAERM model prior to coefficient estimation. Yt is the exchange rate Y on day t. Epochk is the epoch following the kth halving. The first epoch is 0. The rest of the variables are coefficients that we will estimate using regression.
+
 
 Introduction
 ------------
@@ -39,9 +39,8 @@ To develop the BAERM, we used historical Bitcoin data from Coin Metrics, a leadi
 Step 1: Building the Base Model
 -------------------------------
 
-To build the base model, we analysed data from the first two epochs (time periods between Bitcoin mining reward halvings) and regressed the logarithm of Bitcoin’s exchange rate on the mining reward and epoch. This base model captures the fundamental relationship between Bitcoin’s exchange rate, mining reward, and halving epoch, represented by the equation in figure 2:
+To build the base model, we analysed data from the first two epochs (time periods between Bitcoin mining reward halvings) and regressed the logarithm of Bitcoin’s exchange rate on the mining reward and epoch. This base model captures the fundamental relationship between Bitcoin’s exchange rate, mining reward, and halving epoch.
 
-Figure 2: the base model
 
 where Yt represents the exchange rate at day t, Epochk is the kth epoch (for that t), and epsilont is the error term. The coefficients beta0, beta1, and beta2 are estimated using ordinary least squares regression.
 
@@ -99,7 +98,7 @@ The second part of the term, (epochk+1)², introduces a non-linear relationship 
 
 The combination of these two terms is expressed by the graph of the model line (see figure 3), where it can be seen the step from each halving is decaying, and the step up from each halving event is given by a parabolic curve.
 
-Figure 3: the base model. The base model has been trained on the first two halving epochs and then seeded (i.e. the first lag point) with the oldest data available.
+NB - The base model has been trained on the first two halving epochs and then seeded (i.e. the first lag point) with the oldest data available.
 
 **Constant term:** The constant term 0.03 in the equation represents an inherent baseline level of growth in the Bitcoin exchange rate.
 
@@ -140,9 +139,7 @@ Kurtosis:                      19.491   Cond. No.                         255.
 
 Below we see some regression diagnostics along with the regression itself.
 
-Figure 4 — regression diagnostics of the base model.
-
-We can see that the residuals are looking a little skewed and there is some heteroskedasticity within the residuals. The coefficient of determination, or r2 is very high, but that is to be expected given the momentum term. A better r2 is manually calculated by the sum square of the difference of the model to the untrained data. This can be achieved by the following code:
+Diagnostics: We can see that the residuals are looking a little skewed and there is some heteroskedasticity within the residuals. The coefficient of determination, or r2 is very high, but that is to be expected given the momentum term. A better r2 is manually calculated by the sum square of the difference of the model to the untrained data. This can be achieved by the following code:
 
 ```
 \# Calculate the out-of-sample R-squared  
@@ -163,7 +160,7 @@ The result is: 0.84, which indicates a very close fit to the out of sample data 
 Step 2: Adding the Damping Function
 -----------------------------------
 
-Next, we incorporated a damping function to capture the cyclical nature of bull and bear markets. The optimal parameters for the damping function were determined by regressing on the residuals from the base model. The damping function enhances the model’s ability to identify and predict bull and bear cycles in the Bitcoin market. The addition of the damping function to the base model is expressed as the full model equation shown in figure 1.
+Next, we incorporated a damping function to capture the cyclical nature of bull and bear markets. The optimal parameters for the damping function were determined by regressing on the residuals from the base model. The damping function enhances the model’s ability to identify and predict bull and bear cycles in the Bitcoin market. The addition of the damping function to the base model is expressed as the full model equation.
 
 This brings me to the question — why? Why add the damping function to the base model, which is arguably already performing extremely well out of sample and providing valuable insights into the exchange rate movements of Bitcoin.
 
@@ -190,16 +187,12 @@ where x(t) is the displacement, ω₀ is the natural frequency, and γ is the da
 
 By drawing on these analogies, we can better understand the technical aspects of the damping function in the BAERM and appreciate its effectiveness in modelling the complex dynamics of the Bitcoin market. The damping function captures both the periodic nature of market cycles and the attenuation of past events’ influence.
 
-Performance of the full model:
-
-Figure 5— The full model showing much improved diagnostics, though the out of sample R2 did suffer a little, dropping down to 0.81. This is likely due to the bear market rally in 2019/2020 that brought the Bitcoin exchange rate closer to the base model mean.
-
 Conclusion
 ==========
 
 In this article, we explored the Bitcoin Auto-correlation Exchange Rate Model (BAERM), a novel 2-step linear regression model for understanding the Bitcoin USD exchange rate. We discussed the model’s components, their interpretations, and the fundamental insights they provide about Bitcoin exchange rate dynamics.
 
-The BAERM’s ability to capture the fundamental properties of Bitcoin is particularly interesting. The framework underlying the model emphasises the importance of individuals’ subjective valuations and preferences in determining prices. The momentum term, which accounts for auto-correlation, is a testament to this idea, as it shows that historical price trends influence market participants’ expectations and valuations. This observation is consistent with the notion that the price of Bitcoin is determined by individuals’ preferences based on past information.
+The BAERM’s ability to capture the fundamental properties of Bitcoin is particularly interesting. The framework underlying the model emphasises the importance of individuals’ subjective valuations and preferences in determining prices. The momentum term, which accounts for auto-correlation, is a testament to this idea, as it shows that historical price trends influence market participants’ expectations and valuations. This observation is consistent with the notion that the price of Bitcoin is determined by individuals’ preferences based on past information./github.com/btcodeorange/BitcoinExchangeRateModel
 
 Furthermore, the BAERM incorporates the impact of Bitcoin’s supply dynamics on its price through the halving epoch terms. By acknowledging the significance of supply-side factors, the model reflects the principles of sound money. A limited supply of money, such as that of Bitcoin, maintains its value and purchasing power over time. The halving events, which reduce the block reward, play a crucial role in making Bitcoin increasingly scarce, thus reinforcing its attractiveness as a store of value and a medium of exchange.
 
@@ -208,4 +201,12 @@ The constant term in the model serves as the baseline for the model’s predicti
 The BAERM offers a potential robust and well-founded methodology for understanding the Bitcoin USD exchange rate, taking into account the key factors that drive it from both supply and demand perspectives.
 
 In conclusion, the Bitcoin Auto-correlation Exchange Rate Model provides a comprehensive fundamentally grounded and hopefully useful framework for understanding the Bitcoin USD exchange rate.
+
+Running the model
+==================
+git clone https://github.com/btcodeorange/BitcoinExchangeRateModel.git
+cd BitcoinExchangeRateModel
+pip install -r requirements.txt
+python baerm.py
+
 
