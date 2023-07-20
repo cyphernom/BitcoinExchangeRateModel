@@ -6,7 +6,7 @@ Understanding the significance and interactions of scarcity, momentum, sound mon
 by btconometrics
 > THIS IS NOT FINANCIAL ADVICE. THIS ARTICLE IS FOR EDUCATIONAL AND ENTERTAINMENT PURPOSES ONLY.
 > 
-> If you enjoy this article please hold down the clap button at the end.
+> If you enjoy this software and information, please consider contributing to my lightning address
 
 Ln address: [btconometrics@getalby.com](mailto:btconometrics@getalby.com)
 
