@@ -2,8 +2,8 @@ The Bitcoin Auto-correlation Exchange Rate Model: A Novel Two Step Approach
 ===========================================================================
 by btconometrics
 
-Understanding the significance and interactions of scarcity, momentum, sound money and subjective value
-=======================================================================================================
+#Understanding the significance and interactions of scarcity, momentum, sound money and subjective value
+
 
 > THIS IS NOT FINANCIAL ADVICE. THIS ARTICLE IS FOR EDUCATIONAL AND ENTERTAINMENT PURPOSES ONLY.
 > 
