@@ -33,7 +33,7 @@ This is a model of sound money, scarcity and subjective value.
 Introduction
 ------------
 
-Bitcoin, a decentralised peer to peer digital value exchange network, has experienced significant exchange rate fluctuations since its inception in 2009. In this article, we explore a two-step model that reasonably accurately captures both the fundamental drivers of Bitcoin’s value and the cyclical patterns of bull and bear markets. This model, whilst it can produce forecasts, is meant more of a way of understanding past exchange rate changes and understanding the fundamental values driving the ever increasing exchange rate.
+Bitcoin, a decentralised peer to peer digital value exchange network, has experienced significant exchange rate fluctuations since its inception in 2009. In this article, we explore a two-step model that reasonably accurately captures both the fundamental drivers of Bitcoin’s value and the cyclical patterns of bull and bear markets. This model, whilst it can produce forecasts, is meant more of a way of understanding past exchange rate changes and understanding the fundamental values driving the ever increasing exchange rate. The forecasts from the model are to be considered inconclusive and speculative only.
 
 Data preparation
 ----------------
