@@ -23,10 +23,13 @@ def format_dollars(value, pos, is_minor=False):
     return s
 
 
+    
 def plot_charts(plot_df):
     global is_log_scale
     gs_main = plt.GridSpec(1, 1)
     fig, ax = plt.subplots(figsize=(8, 6))
+
+
 
     # Calculate residuals
     residuals = plot_df['logprice'] - plot_df['YHATs2']
@@ -122,6 +125,8 @@ def plot_charts(plot_df):
     button_scale.on_clicked(toggle_scale)
     update_scale()
 
+	
+
     plt.show()
 
 def calculate_oos_r_squared(actual, predicted):
@@ -129,6 +134,40 @@ def calculate_oos_r_squared(actual, predicted):
     SSR = np.sum(residuals ** 2)
     SST = np.sum((actual - actual.mean()) ** 2)
     return 1 - SSR / SST
+
+
+def calculate_rolling_r_squared(df):
+    df['rolling_r_squared'] = np.nan  # Create the 'rolling_r_squared' column and fill with NaN
+    oos_mask = (df['epoch'] >= 2) & (df['date'] <= pd.Timestamp.now())
+    
+    for i in df.index:
+	    if oos_mask[i]:  # Update the rolling R-squared only where epoch >= 2
+		    oos_actual = df.loc[oos_mask & (df.index <= i), 'logprice']
+		    oos_predicted = df.loc[oos_mask & (df.index <= i), 'YHATs2']
+		    R2_oos = calculate_oos_r_squared(oos_actual, oos_predicted)
+		    df.at[i, 'rolling_r_squared'] = R2_oos
+				
+    return df['rolling_r_squared'].tolist()
+
+
+    
+def plot_rolling_r_squared(df):
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(df['date'], df['rolling_r_squared'], label='Rolling Out-of-sample R-squared', color='blue')
+    ax.set_xlabel('Date')
+    ax.set_ylabel('Rolling Out-of-sample R-squared')
+    ax.set_title('Rolling Out-of-sample R-squared')
+    ax.set_ylim(0, 1)  # Force the y-scale to be exactly 0 to 1
+    ax.legend()
+    ax.grid(True)
+
+    # Add dashed vertical lines at the change of each epoch for the relevant epochs
+    epoch_changes = df[(df['hindicator'] == True) & (df['epoch'] >= 2)  & (df['date'] <= pd.Timestamp.now())]
+    
+    for date in epoch_changes['date']:
+        ax.axvline(x=date, color='blue', linestyle='-', linewidth=2)
+
+    plt.show()
 
 def run_regression(df):
     mask = df['epoch'] < 2
@@ -216,8 +255,13 @@ def main():
 
   
 	plot_df= df[(df['date'] > plot_start_date) & (df['date'] < plot_end_date)]
-
 	plot_charts(plot_df)
+	
+	
+	# Calculate rolling out-of-sample R-squared
+	df['rolling_r_squared'] = calculate_rolling_r_squared(df)
+	plot_rolling_r_squared(df)
+
 
 if __name__ == "__main__":
     main()
