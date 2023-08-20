@@ -30,18 +30,32 @@ class Model:
         except np.linalg.LinAlgError:
             raise ValueError("Singular matrix.")
 
-        xtxinvxt = xtxinv @ x.T
-        betahat = xtxinvxt @ Y
-        hatmatrix = x @ xtxinvxt
-        yhat = hatmatrix @ Y
-        leverage = np.diag(hatmatrix)
+     # Using np.linalg.lstsq to directly solve the least squares problem
+        betahat, residuals, _, _ = np.linalg.lstsq(x, Y, rcond=None)
+
+        yhat = x @ betahat
         residuals = Y - yhat
-        SSE = np.sum(residuals**2)
+        SSE = residuals @ residuals
+        hatmatrix = x @ np.linalg.lstsq(x.T @ x, x.T, rcond=None)[0]
+        leverage = np.diag(hatmatrix)
         ybar = np.mean(Y)
-        SST = np.sum((ybar - Y)**2)
+        SST = np.sum((Y - ybar) ** 2)
         R2 = 1 - SSE / SST
-        AIC = n * np.log(SSE / n) + (n + X.shape[1]) / (1 - (X.shape[1] + 2) / n)
         SSR = SST - SSE
+        AIC = n * np.log(SSE / n) + (n + X.shape[1]) / (1 - (X.shape[1] + 2) / n)
+       
+        #xtxinvxt = xtxinv @ x.T
+        #betahat = xtxinvxt @ Y
+        #hatmatrix = x @ xtxinvxt
+        #yhat = hatmatrix @ Y
+        #leverage = np.diag(hatmatrix)
+        #residuals = Y - yhat
+        #SSE = np.sum(residuals**2)
+        #ybar = np.mean(Y)
+        #SST = np.sum((ybar - Y)**2)
+        #R2 = 1 - SSE / SST
+        #AIC = n * np.log(SSE / n) + (n + X.shape[1]) / (1 - (X.shape[1] + 2) / n)
+        #SSR = SST - SSE
 
         lm = {
             'betahat': betahat,
@@ -104,6 +118,43 @@ class Model:
 
         return coefficients, dates
 
+    #lets calculate YHATs for reg's on all dates. 
+    #this function should: run the regression mOLS for each datapoint in the self.df (as per the study_coefficient_evolution method above) 
+    #and then calculate the YHAT (that is the predicted values) for each regression, with a view to plotting the results
+    def study_yhats(self):
+        all_yhats = []
+        dates = []
+        n = self.df.index.to_numpy()
+
+        for i in range(self.df.index[0], self.df.index[-1] + 1):
+            mask = self.df.index <= i
+            reg_X = self.df.loc[mask, ['logprice', 'phaseplus']].shift(1).iloc[1:].values
+            reg_y = self.df.loc[mask, 'logprice'].iloc[1:].values
+
+            try:
+                result = self.mOLS(reg_y, reg_X)
+                coefs = result['betahat']
+            
+                # Calculate YHAT using the recursive formula
+                yhat = np.zeros_like(reg_y)
+                yhat[0] = reg_y[0]
+                for j in range(1, len(yhat)):
+                    yhat[j] = coefs[0] + coefs[1] * yhat[j - 1] + coefs[2] * reg_X[j - 1, 1]
+
+                # Apply decay function as in calculate_YHATs2
+                decayfunc = 3 * np.exp(-0.0004 * n[:len(yhat)]) * np.cos(0.005 * n[:len(yhat)] - 1)
+                yhat_s2 = yhat + decayfunc
+                all_yhats.append(yhat_s2) # Adding all the adjusted predicted values for this regression
+
+                # Add the corresponding dates for this yhat, making sure the lengths match
+                current_dates = [self.df.at[idx, 'date'] for idx in range(self.df.index[0], self.df.index[0] + len(yhat))]
+                dates.append(current_dates)
+            except ValueError as e:
+                print(f"Skipping iteration {i} due to {e}")
+                continue
+
+        return all_yhats, dates
+       
 
 
 
