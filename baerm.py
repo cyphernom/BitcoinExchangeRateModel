@@ -1,3 +1,4 @@
+#Copyright (c) 2020-2023 Btconometrics
 import tkinter as tk
 from tkinter import simpledialog
 from data_preprocessing import DataPreprocessing
