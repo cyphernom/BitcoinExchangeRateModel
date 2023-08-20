@@ -6,3 +6,4 @@ pandas-datareader==0.10.0
 scipy==1.10.1
 statsmodels==0.14.0
 argparse==1.4.0
+tkcalendar==1.6.1
