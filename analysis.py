@@ -1,6 +1,7 @@
 #(c)2020-2023 Nick Btconometrics
 import numpy as np
 import datetime as dt
+from scipy.stats import binom
 
 class Analysis:
     def __init__(self, df):
@@ -35,3 +36,39 @@ class Analysis:
                 self.df.at[i, 'rolling_r_squared'] = R2_oos
 
         return self.df['rolling_r_squared'].tolist()
+
+    def percentile(self, x, p):
+        if p >= 1:
+            return np.max(x)
+        if p <= 0:
+            return np.min(x)
+        else:
+            n = len(x)
+            r = (1 + p * (n - 1)) - 1
+            rfrac = r % 1
+            rint = int(r // 1)
+            x.sort()
+            xp = (1 - rfrac) * x[rint] + rfrac * x[rint + 1]
+            return xp
+
+    def binominv(self, n, p, a):
+        low = 0
+        high = 1000000000000  # big enough for most purposes!
+
+        while low <= high:
+            mid = (low + high) // 2
+            result = binom.cdf(mid, n, p)
+            if result > a:
+                high = mid - 1
+            else:
+                low = mid + 1
+
+        return low
+
+    def upperCI(self, alpha, p, x):
+        n = len(x)
+        return percentile(x, binominv(n, p, 1 - alpha / 2) / n)
+
+    def lowerCI(self, alpha, p, x):
+        n = len(x)
+        return percentile(x, binominv(n, p, alpha / 2) / n)
