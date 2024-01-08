@@ -17,7 +17,7 @@ by btconometrics
 > 
 > If you enjoy this software and information, please consider contributing to my lightning address
 
-Ln address: [btconometrics@getalby.com](mailto:btconometrics@getalby.com)
+
 
 Prelude
 -------
