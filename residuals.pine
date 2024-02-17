@@ -1,0 +1,80 @@
+//@version=5
+indicator("RESIDUALS", overlay=false)
+
+// Define halving dates as UNIX timestamps for the 4 known and 1 hypothetical future halving
+halving1 = timestamp("2012-11-28")
+halving2 = timestamp("2016-07-09")
+halving3 = timestamp("2020-05-11")
+halving4 = timestamp("2024-05-01") // Hypothetical 5th halving date
+
+// Define rewards for each epoch, including the hypothetical next halving
+reward50 = 50
+reward25 = 25
+reward12_5 = 12.5
+reward6_25 = 6.25
+reward3_125 = 3.125 // Reward after the hypothetical 5th halving
+
+// Calculate the current reward based on halving dates
+var float currentReward = na
+if (time < halving1)
+    currentReward := reward50
+else if (time < halving2)
+    currentReward := reward25
+else if (time < halving3)
+    currentReward := reward12_5
+else if (time < halving4)
+    currentReward := reward6_25
+else
+    currentReward := reward3_125
+
+// Calculate the epoch, now including the 5th epoch
+var int epoch = na
+if (time < halving1)
+    epoch := 0
+else if (time < halving2)
+    epoch := 1
+else if (time < halving3)
+    epoch := 2
+else if (time < halving4)
+    epoch := 3
+else
+    epoch := 4
+
+// Calculate phaseplus based on the current epoch and reward
+phaseplus = currentReward - ((epoch + 1) * (epoch + 1))
+
+// Placeholder coefficients
+beta0 = 2.92385283e-02
+beta1 = 9.96869586e-01
+beta2 = -4.26562358e-04
+
+// Using var to retain the value of lastYHAT across bars
+var float lastYHATLog = na  // YHAT in log space
+
+// Autocorrelation: Use math.log of last price or lastYHATLog if available; otherwise, use math.log of close
+if (na(lastYHATLog))
+    lastYHATLog := math.log(close)
+
+// Applying the decay function directly to YHAT in log space
+n = bar_index+1630
+decayFunc = 3 * math.exp(-0.0004 * n) * math.cos(0.005 * n - 1)
+
+// Calculate YHAT in log space and add the decay function to calculate YHATs2 in log space
+YHATLog = beta0 + beta1 * lastYHATLog + beta2 * phaseplus
+YHATs2Log = YHATLog + decayFunc
+
+// Update lastYHATLog with the new YHAT value for the next bar
+lastYHATLog := YHATLog
+
+// Exponentiate YHAT and YHATs2 to bring them back to the original scale
+expYHAT = math.exp(YHATLog)
+expYHATs2 = math.exp(YHATs2Log)
+
+// Calculate residuals in log space
+residualsLog = math.log(close) - YHATs2Log
+
+hline(-0.318, "Zero Line", color=color.gray) // Optionally, plot a zero line for reference
+hline(0, "Zero Line", color=color.gray) // Optionally, plot a zero line for reference
+hline(0.318, "Zero Line", color=color.gray) // Optionally, plot a zero line for reference
+
+plot(residualsLog, "Residuals Log", color=color.blue) // Plotting the residuals log
